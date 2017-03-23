@@ -1,0 +1,156 @@
+* {
+	padding: 0;
+    margin: 0;
+}
+
+html {
+    font-size: 100%;
+}
+
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  overflow: scroll;
+  font-size: 0.938rem;
+  min-width: 220px;
+  background-color: #f2f2f2;
+}
+
+nav {
+    width: 100%;
+    padding: 4px 0;
+    /*background-color: #003333\9;*/
+    /*background: linear-gradient(to right, #003333, #330033); /* 标准的语法 */
+    /*background: -webkit-linear-gradient(left, #330033, #003333); /* chrome, Safari 5.1 - 6.0 */
+    /*background: -o-linear-gradient(right, #003333, #330033); /* Opera 11.1 - 12.0 */
+    /*background: -moz-linear-gradient(right, #003333, #330033); /* Firefox 3.6 - 15 */
+	background: rgba(0,0,0,0.9);
+	/*position: fixed;*/
+	top: 0;
+}
+
+.navContainer {
+    width: 350px;
+    margin: 0 auto;
+}
+
+#navLogo {
+    display: block;
+    position: absolute;
+    height: 43px;
+    float: left;
+}
+
+#navLogo > img {
+    height: 100%;
+    width: auto;
+}
+
+#UrWebs {
+    display: block;
+    width: 60px;
+    height: 43px;
+    margin: 0 auto;
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 5px;
+    color: white;
+    outline: none;
+    cursor: pointer;
+}
+
+.navBottom {
+    margin-top: 4px;
+    width: 100%;
+    /*display: none;*/
+    overflow: hidden;
+}
+
+.chooseLR {
+    width: 125px;
+    margin: 0 auto;
+}
+
+.chooseLR a {
+    display: inline-block;
+    margin-top: 10px;
+    color: #cccccc;
+    font-size: 14px;
+    line-height: 20px;
+    text-decoration:none;
+}
+
+.chooseLR a:hover {
+    color:white;
+}
+
+#chooseL {
+    margin-right: 15px;
+}
+
+.selectedLR {
+    color: white !important;
+    border-bottom: 1px solid white;
+}
+
+.login, .register {
+    width: 100%;
+    padding: 15px 0px;
+
+}
+
+.login input, .register input {
+    display: block;
+    width: 180px;
+    height: 40px;
+    margin: 0 auto 15px auto;
+    border: 1px solid white;
+    border-radius: 10px;
+    outline: none;
+    text-align: center;
+    background-color: white;
+    letter-spacing: 1px;
+}
+
+#logSub, #regSub, #signOut {
+    width: 90px;
+    background-color: #4caf50;
+    border: none;
+    color: white;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+#signOut {
+    display: block;
+    height: 30px;
+    width: 80px;
+    position: relative;
+    margin: 0 auto 15px auto;
+    outline: none;
+    background-color: #ce4312;
+    border-radius: 5px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+#regSub:disabled {
+	cursor: auto;
+	background-color: gray;
+}
+
+.reg {
+    display: none;
+}
+
+#notMatch {
+    /*display: block;*/
+    width: 180px;
+    margin: 0 auto 15px auto;
+    color: red;
+    text-align: center;
+    display: none;
+}
+
+#content {
+	height: 500px;
+}
