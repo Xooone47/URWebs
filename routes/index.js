@@ -74,7 +74,7 @@ router.post("/addWeb",function(req,res){
 });
 
 router.post("/getUserWebs", function(req, res) {
-	Web.get(null,function(err,webs){
+	Web.get(req.session.user.name, function(err,webs){
    		if(err){
       		webs = [];
    		}

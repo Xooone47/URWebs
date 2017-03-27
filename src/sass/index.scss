@@ -11,12 +11,14 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   overflow: scroll;
   font-size: 0.938rem;
-  min-width: 220px;
+  min-width: 800px;
+  color: #586069;
   background-color: #f2f2f2;
 }
 
 nav {
     width: 100%;
+    min-width: 800px;
     padding: 4px 0;
     /*background-color: #003333\9;*/
     /*background: linear-gradient(to right, #003333, #330033); /* 标准的语法 */
@@ -151,6 +153,112 @@ nav {
     display: none;
 }
 
+#welcomeTag {
+    display: block;
+    position: relative;
+    margin: 10px auto 0 auto;
+    color: white;
+    width: 40px;
+    letter-spacing: 1px;
+}
+
 #content {
-	height: 500px;
+    min-width: 800px;
+    height: 500px;
+}
+
+#contentContainer {
+    padding: 30px 40px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+
+
+#Menu {
+    width: 200px;
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 5px;
+    float: left;
+    /*display: inline-block;*/
+    /*border: 1px rgba(0, 0, 0, 0.31) solid !important;*/
+}
+
+#addWebHead {
+    text-align: center;
+    width: 100%;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.addWebInput {   
+    display: block;
+    width: 180px;
+    height: 35px;
+    margin: 0 auto 15px auto;
+    border: 1px solid rgba(0, 0, 0, 0.31);
+    border-radius: 5px;
+    outline: none;
+    text-align: center;
+    background-color: white;
+    letter-spacing: 1px;
+}
+
+.menuBtn {
+    width: 80px;
+    height: 28px;
+    margin: 0 10px;
+    border: 1px solid rgba(0, 0, 0, 0.31);
+    background-color: white;
+    outline: none;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+#webDist {
+    
+}
+
+#addWebContainer {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.31);
+    padding-bottom: 15px;
+    margin-bottom: 5px;
+}
+
+#colWebs {
+    /*display: inline-block;*/
+    /*background-color: white;*/
+    margin-left: 260px;
+    vertical-align: top;
+    /*width: 675px;*/
+}
+
+.lis {
+    list-style: none;
+
+}
+
+.distItem {
+    text-align: center;
+    padding: 5px 0;
+}
+
+.distItem:hover {
+    background-color: #00CC99;
+    color: white;
+}
+
+.webItem {
+    display: inline-block;
+    width: 205px;
+    height: 105px;
+    margin: 0 20px 15px 0px;
+    background-color: white;
+}
+
+.weburl {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
 }

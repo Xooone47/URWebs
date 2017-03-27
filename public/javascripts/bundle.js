@@ -31717,7 +31717,7 @@ var NavBottom = React.createClass({
       passwordRepeat: ''
     };
   },
-  hundleChoose: function hundleChoose(e) {
+  handleChoose: function handleChoose(e) {
     //处理切换登录、注册框
     var speed = 250;
     if (e.target.id == "chooseL") {
@@ -31740,7 +31740,7 @@ var NavBottom = React.createClass({
       }
     }
   },
-  hundleLogin: function hundleLogin() {
+  handleLogin: function handleLogin() {
     //登录
     var that = this;
     console.log("login");
@@ -31754,7 +31754,8 @@ var NavBottom = React.createClass({
         if (data.success == true) {
           that.setState({ logIn: true });
           contentCom.setState({ log: true });
-          getUserWebs();
+          contentCom.getUserWebs(); //让content组件获取用户数据
+          colWebsCom.setState({ showWebs: "ALL" });
         } else {
           console.log(data.error);
         }
@@ -31764,7 +31765,7 @@ var NavBottom = React.createClass({
       }
     });
   },
-  hundleSignup: function hundleSignup() {
+  handleSignup: function handleSignup() {
     //注册
     var that = this;
     console.log("signup");
@@ -31778,6 +31779,8 @@ var NavBottom = React.createClass({
         if (data.success == true) {
           that.setState({ logIn: true });
           contentCom.setState({ log: true });
+          contentCom.getUserWebs(); //让content组件获取用户数据
+          colWebsCom.setState({ showWebs: "ALL" });
         } else {
           console.log(data.error);
         }
@@ -31787,7 +31790,7 @@ var NavBottom = React.createClass({
       }
     });
   },
-  hundleSignout: function hundleSignout() {
+  handleSignout: function handleSignout() {
     //登出
     var that = this;
     console.log("signout");
@@ -31800,6 +31803,8 @@ var NavBottom = React.createClass({
         if (data.success == true) {
           that.setState({ logIn: false, logOrReg: true });
           contentCom.setState({ log: false });
+          contentCom.getHotWebs(); //让content组件获取公共数据
+          colWebsCom.setState({ showWebs: "ALL" });
         }
       },
       error: function error(xhr, textStatus) {
@@ -31824,23 +31829,6 @@ var NavBottom = React.createClass({
       }
     }
   },
-  addWeb: function addWeb() {
-    $.ajax({
-      url: '/addWeb',
-      type: 'POST',
-      data: { url: "www.zhihu.com",
-        webName: "zhihu",
-        groupName: "social"
-      },
-      // dataType: 'json',
-      success: function success(data) {
-        console.log(data);
-      },
-      error: function error(xhr, textStatus) {
-        console.log('error', xhr, textStatus);
-      }
-    });
-  },
   render: function render() {
     var username = this.state.username,
         password = this.state.password,
@@ -31854,12 +31842,12 @@ var NavBottom = React.createClass({
           { className: 'chooseLR' },
           React.createElement(
             'a',
-            { href: '#signin', id: 'chooseL', className: 'selectedLR', onClick: this.hundleChoose },
+            { href: '#signin', id: 'chooseL', className: 'selectedLR', onClick: this.handleChoose },
             'SIGN IN'
           ),
           React.createElement(
             'a',
-            { href: '#signup', id: 'chooseR', onClick: this.hundleChoose },
+            { href: '#signup', id: 'chooseR', onClick: this.handleChoose },
             'SIGN UP'
           )
         ),
@@ -31871,7 +31859,7 @@ var NavBottom = React.createClass({
             { className: 'login' },
             React.createElement('input', { type: 'text', name: 'username', placeholder: 'USERNAME', maxLength: '14', value: username, onChange: this.inputChange, required: true }),
             React.createElement('input', { type: 'password', name: 'password', placeholder: 'PASSWORD', maxLength: '14', value: password, onChange: this.inputChange, required: true }),
-            React.createElement('input', { type: 'submit', value: 'SIGN IN', id: 'logSub', onClick: this.hundleLogin })
+            React.createElement('input', { type: 'submit', value: 'SIGN IN', id: 'logSub', onClick: this.handleLogin })
           )
         ),
         React.createElement(
@@ -31888,7 +31876,7 @@ var NavBottom = React.createClass({
               { id: 'notMatch' },
               'Passwords do not match!'
             ),
-            React.createElement('input', { type: 'submit', value: 'SIGN UP', id: 'regSub', onClick: this.hundleSignup })
+            React.createElement('input', { type: 'submit', value: 'SIGN UP', id: 'regSub', onClick: this.handleSignup })
           )
         )
       );
@@ -31897,13 +31885,14 @@ var NavBottom = React.createClass({
         'div',
         { className: 'navBottom' },
         React.createElement(
-          'button',
-          { id: 'addWebBtn', onClick: this.addWeb },
-          'ADD WEB'
+          'span',
+          { id: 'welcomeTag' },
+          'Hi, ',
+          this.state.username
         ),
         React.createElement(
           'button',
-          { id: 'signOut', onClick: this.hundleSignout },
+          { id: 'signOut', onClick: this.handleSignout },
           'SIGN OUT'
         )
       );
@@ -31924,34 +31913,137 @@ var NavContainer = React.createClass({
   }
 });
 
+var menuCom = void 0;
 var Menu = React.createClass({
   displayName: 'Menu',
 
+  getInitialState: function getInitialState() {
+    return {
+      dist: []
+    };
+  },
+  addWeb: function addWeb() {
+    var that = this;
+    var url = $("#addWebUrl").val();
+    var webName = $("#addWebName").val();
+    var groupName = $("#addWebGroup").val();
+    // console.log(url, webName, groupName);
+    if (url == "" || webName == "" || groupName == "") {
+      console.log("fail to add web");
+      return;
+    }
+    $.ajax({
+      url: '/addWeb',
+      type: 'POST',
+      data: { url: url,
+        webName: webName,
+        groupName: groupName
+      },
+      // dataType: 'json',
+      success: function success(data) {
+        console.log(data);
+        contentCom.getUserWebs();
+        that.resetWeb();
+      },
+      error: function error(xhr, textStatus) {
+        console.log('error', xhr, textStatus);
+      }
+    });
+  },
+  resetWeb: function resetWeb() {
+    $("#addWebUrl").val("");
+    $("#addWebName").val("");
+    $("#addWebGroup").val("");
+  },
+  handleDist: function handleDist(e) {
+    colWebsCom.setState({ showWebs: e.target.innerHTML });
+  },
   render: function render() {
+    menuCom = this;
+    var that = this;
+    var distList = this.state.dist.map(function (distItem, index) {
+      return React.createElement(
+        'li',
+        { key: index, className: 'distItem lis', onClick: that.handleDist },
+        distItem
+      );
+    });
     return React.createElement(
       'div',
       { id: 'Menu' },
       React.createElement(
-        'h1',
-        null,
-        '11111'
+        'div',
+        { id: 'addWebContainer' },
+        React.createElement(
+          'span',
+          { id: 'addWebHead' },
+          'ADD WEB'
+        ),
+        React.createElement('input', { type: 'text', id: 'addWebUrl', className: 'addWebInput', placeholder: 'URL', required: true }),
+        React.createElement('input', { type: 'text', id: 'addWebName', className: 'addWebInput', placeholder: 'WEB NAME', required: true }),
+        React.createElement('input', { type: 'text', id: 'addWebGroup', className: 'addWebInput', placeholder: 'GROUP', required: true }),
+        React.createElement(
+          'button',
+          { id: 'addWebBtn', className: 'menuBtn', onClick: this.addWeb },
+          'CONFIRM'
+        ),
+        React.createElement(
+          'button',
+          { id: 'resetWebBtn', className: 'menuBtn', onClick: this.resetWeb },
+          'RESET'
+        )
+      ),
+      React.createElement(
+        'ul',
+        { id: 'webDist' },
+        React.createElement(
+          'li',
+          { className: 'distItem lis', onClick: this.handleDist },
+          'ALL'
+        ),
+        distList
       )
     );
   }
 });
 
+var colWebsCom = void 0;
 var ColWebs = React.createClass({
   displayName: 'ColWebs',
 
+  getInitialState: function getInitialState() {
+    return {
+      allWebs: [],
+      showWebs: "ALL"
+    };
+  },
   render: function render() {
+    colWebsCom = this;
+    var allWebs = this.state.allWebs;
+    if (this.state.showWebs != "ALL") {
+      var newArr = [];
+      for (var i = 0; i < allWebs.length; i++) {
+        if (allWebs[i].groupName == this.state.showWebs) {
+          newArr.push(allWebs[i]);
+        }
+      }
+      allWebs = newArr;
+    }
+    var webList = allWebs.map(function (web, index) {
+      return React.createElement(
+        'li',
+        { key: index, className: 'lis webItem' },
+        React.createElement(
+          'a',
+          { className: 'weburl', href: web.url, target: '_blank' },
+          web.webName
+        )
+      );
+    });
     return React.createElement(
       'ul',
-      { className: 'ColWebs' },
-      React.createElement(
-        'h1',
-        null,
-        '233333'
-      )
+      { id: 'colWebs' },
+      webList
     );
   }
 });
@@ -31964,19 +32056,72 @@ var Content = React.createClass({
     return {
       log: false,
       webs: null,
-      groups: []
+      groups: null
     };
+  },
+  getHotWebs: function getHotWebs() {
+    var that = this;
+    $.ajax({
+      url: '/getHotWebs',
+      type: 'GET',
+      data: {},
+      // dataType: 'json',
+      success: function success(data) {
+        var groups = [];
+        for (var i = 0; i < data.length; i++) {
+          if (groups.indexOf(data[i].groupName) < 0) {
+            groups.push(data[i].groupName);
+          }
+        }
+        that.setState({
+          webs: data,
+          groups: groups
+        });
+        colWebsCom.setState({ allWebs: data });
+        menuCom.setState({ dist: groups });
+        // console.log(that.state.webs, that.state.groups);
+      },
+      error: function error(xhr, textStatus) {
+        console.log('error', xhr, textStatus);
+      }
+    });
+  },
+  getUserWebs: function getUserWebs() {
+    var that = this;
+    $.ajax({
+      url: '/getUserWebs',
+      type: 'POST',
+      data: {},
+      // dataType: 'json',
+      success: function success(data) {
+        var groups = [];
+        for (var i = 0; i < data.length; i++) {
+          if (groups.indexOf(data[i].groupName) < 0) {
+            groups.push(data[i].groupName);
+          }
+        }
+        that.setState({
+          webs: data,
+          groups: groups
+        });
+        colWebsCom.setState({ allWebs: data });
+        menuCom.setState({ dist: groups });
+        // console.log(that.state.webs, that.state.groups);
+      },
+      error: function error(xhr, textStatus) {
+        console.log('error', xhr, textStatus);
+      }
+    });
+  },
+  componentWillMount: function componentWillMount() {
+    this.getHotWebs();
   },
   render: function render() {
     contentCom = this;
-    if (this.state.log == false) {
-      getHotWebs();
-      console.log(this.state.webs);
-    }
     return React.createElement(
       'div',
-      { className: 'contentContainer' },
-      React.createElement(Menu, null),
+      { id: 'contentContainer' },
+      React.createElement(Menu, { dist: this.state.groups }),
       React.createElement(ColWebs, null)
     );
   }
@@ -31986,35 +32131,35 @@ ReactDOM.render(React.createElement(NavContainer, null), document.getElementById
 
 ReactDOM.render(React.createElement(Content, null), document.getElementById('content'));
 
-function getUserWebs() {
-  $.ajax({
-    url: '/getUserWebs',
-    type: 'POST',
-    data: {},
-    // dataType: 'json',
-    success: function success(data) {
-      console.log(data);
-    },
-    error: function error(xhr, textStatus) {
-      console.log('error', xhr, textStatus);
-    }
-  });
-}
+// function getUserWebs() {
+// 	$.ajax({
+// 		url: '/getUserWebs',
+//   			type: 'POST',
+//   			data: {},
+//   			// dataType: 'json',
+//   			success: function(data) {
+//   				console.log(data);
+//   			},
+//   			error:function(xhr,textStatus){
+//         		console.log('error', xhr, textStatus);
+//     		}
+// 	});
+// }
 
-function getHotWebs() {
-  $.ajax({
-    url: '/getHotWebs',
-    type: 'GET',
-    data: {},
-    // dataType: 'json',
-    success: function success(data) {
-      // console.log(data);
-      contentCom.setState({ webs: data });
-    },
-    error: function error(xhr, textStatus) {
-      console.log('error', xhr, textStatus);
-    }
-  });
-}
+// function getHotWebs() {
+// 	$.ajax({
+// 		url: '/getHotWebs',
+//   			type: 'GET',
+//   			data: {},
+//   			// dataType: 'json',
+//   			success: function(data) {
+//   				// console.log(data);
+//   				contentCom.setState({webs: data});
+//   			},
+//   			error:function(xhr,textStatus){
+//         		console.log('error', xhr, textStatus);
+//     		}
+// 	});
+// }
 
 },{"../../node_modules/jquery":24,"../../node_modules/react":188,"../../node_modules/react-dom":37,"../../node_modules/redux":194}]},{},[199]);
