@@ -185,11 +185,10 @@ let NavContainer = React.createClass({
 	}
 });
 
-let menuCom;
 let Menu = React.createClass({
 	getInitialState: function() {
 		return {
-			dist: []
+			// dist: []
 		}
 	},
 	addWeb: function() {
@@ -197,7 +196,6 @@ let Menu = React.createClass({
 		let url = $("#addWebUrl").val();
 		let webName = $("#addWebName").val();
 		let groupName = $("#addWebGroup").val();
-		// console.log(url, webName, groupName);
 		if (url == "" || webName == "" || groupName == "") {
 			console.log("fail to add web");
 			return;
@@ -205,7 +203,8 @@ let Menu = React.createClass({
   		$.ajax({
   			url: '/addWeb',
   			type: 'POST',
-  			data: {url: url,
+  			data: {
+  				url: url,
   				webName: webName,
   				groupName: groupName
   				},
@@ -226,30 +225,58 @@ let Menu = React.createClass({
   		$("#addWebGroup").val("");
   	},
   	handleDist: function(e) {
+  		$('.showDist').toggleClass('showDist');
+  		$(e.target).toggleClass('showDist');
   		colWebsCom.setState({showWebs: e.target.innerHTML});
   	},
+  	showAddWebForm: function() {
+  		$("#addWebForm").slideToggle();
+  	},
+  	showMenu: function() {
+  		$("#menuContainer").slideToggle();
+  	},
 	render: function() {
-		menuCom = this;
+		console.log(2);
+		console.log(this.props.dist);
 		let that = this;
-		let distList = this.state.dist.map(function(distItem, index) {
+		let distList = this.props.dist.map(function(distItem, index) {
 			return (<li key={index} className="distItem lis" onClick={that.handleDist}>{distItem}</li>)
-		})
-		return (
-			<div id="Menu">
-				<div id="addWebContainer">
-					<span id="addWebHead">ADD WEB</span>
-					<input type="text" id="addWebUrl" className="addWebInput" placeholder="URL" required/>
-					<input type="text" id="addWebName" className="addWebInput" placeholder="WEB NAME" required/>
-					<input type="text" id="addWebGroup" className="addWebInput" placeholder="GROUP" required/>
-					<button id="addWebBtn" className="menuBtn" onClick={this.addWeb}>CONFIRM</button>
-					<button id="resetWebBtn" className="menuBtn" onClick={this.resetWeb}>RESET</button>
+		});
+		if (this.props.ifLogin) {
+			return (
+				<div id="Menu">
+					<span id="menuHead" onClick={this.showMenu}>MENU</span>
+					<div id="menuContainer">
+					<div id="addWebContainer">
+						<span id="addWebHead" onClick={this.showAddWebForm}>ADD WEB</span>
+						<div id="addWebForm">
+							<input type="text" id="addWebUrl" className="addWebInput" placeholder="URL" required/>
+							<input type="text" id="addWebName" className="addWebInput" placeholder="WEB NAME" required/>
+							<input type="text" id="addWebGroup" className="addWebInput" placeholder="GROUP" required/>
+							<button id="addWebBtn" className="menuBtn" onClick={this.addWeb}>CONFIRM</button>
+							<button id="resetWebBtn" className="menuBtn" onClick={this.resetWeb}>RESET</button>
+						</div>			
+					</div>
+					<ul id="webDist">
+						<li className="distItem lis showDist" onClick={this.handleDist}>ALL</li>
+						{distList}
+					</ul>
+					</div>
 				</div>
-				<ul id="webDist">
-					<li className="distItem lis" onClick={this.handleDist}>ALL</li>
-					{distList}
-				</ul>
-			</div>
-		);
+			);	
+		} else {
+			return (
+				<div id="Menu">
+					<span id="menuHead" onClick={this.showMenu}>MENU</span>
+					<div id="menuContainer">
+					<ul id="webDist">
+						<li className="distItem lis showDist" onClick={this.handleDist}>ALL</li>
+						{distList}
+					</ul>
+					</div>
+				</div>
+			);
+		}
 	}
 });
 
@@ -257,13 +284,14 @@ let colWebsCom;
 let ColWebs = React.createClass({
 	getInitialState: function() {
 		return {
-			allWebs: [],
 			showWebs: "ALL"
 		}
 	},
 	render: function() {
+		console.log(3);
 		colWebsCom = this;
-		let allWebs = this.state.allWebs;
+		let allWebs = this.props.allWebs;
+		// let allWebs = this.state.allWebs;
 		if (this.state.showWebs != "ALL") {
 			let newArr = []
 			for (let i = 0; i < allWebs.length; i++) {
@@ -294,8 +322,8 @@ let Content = React.createClass({
 	getInitialState: function() {
 		return {
 			log: false,
-			webs: null,
-			groups: null,
+			webs: [],
+			groups: [],
 		}
 	},
 	getHotWebs: function() {
@@ -316,9 +344,6 @@ let Content = React.createClass({
   					webs: data,
   					groups: groups
   				});
-  				colWebsCom.setState({allWebs: data});
-  				menuCom.setState({dist: groups});
-  				// console.log(that.state.webs, that.state.groups);
   			},
   			error:function(xhr,textStatus){
         		console.log('error', xhr, textStatus);
@@ -343,9 +368,6 @@ let Content = React.createClass({
   					webs: data,
   					groups: groups
   				});
-  				colWebsCom.setState({allWebs: data});
-  				menuCom.setState({dist: groups});
-  				// console.log(that.state.webs, that.state.groups);
   			},
   			error:function(xhr,textStatus){
         		console.log('error', xhr, textStatus);
@@ -353,14 +375,16 @@ let Content = React.createClass({
 		});
 	},
 	componentWillMount: function() {
+		console.log("contentWillMount");
 		this.getHotWebs();
 	},
 	render: function() {
+		console.log(1);
 		contentCom = this;
 		return (
 			<div id="contentContainer">
-				<Menu dist={this.state.groups}/>
-				<ColWebs/>
+				<Menu dist={this.state.groups} ifLogin={this.state.log}/>
+				<ColWebs allWebs={this.state.webs}/>
 			</div>
 		);
 	}
@@ -375,34 +399,3 @@ ReactDOM.render(
 	<Content/>,
 	document.getElementById('content')
 );
-
-// function getUserWebs() {
-// 	$.ajax({
-// 		url: '/getUserWebs',
-//   			type: 'POST',
-//   			data: {},
-//   			// dataType: 'json',
-//   			success: function(data) {
-//   				console.log(data);
-//   			},
-//   			error:function(xhr,textStatus){
-//         		console.log('error', xhr, textStatus);
-//     		}
-// 	});
-// }
-
-// function getHotWebs() {
-// 	$.ajax({
-// 		url: '/getHotWebs',
-//   			type: 'GET',
-//   			data: {},
-//   			// dataType: 'json',
-//   			success: function(data) {
-//   				// console.log(data);
-//   				contentCom.setState({webs: data});
-//   			},
-//   			error:function(xhr,textStatus){
-//         		console.log('error', xhr, textStatus);
-//     		}
-// 	});
-// }

@@ -25,13 +25,15 @@ gulp.task('sass', function() {
         .pipe(gulp.dest('./public/stylesheets'));//dest()写入文件
 });
 
-// gulp.task('lint', function() {
-//     gulp.src('./src/js/*.js')
-//         .pipe(jshint())
-//         .pipe(jshint.reporter('default'));
-// });
 
 gulp.task("default", ['browserify', 'sass'], function() {
     gulp.watch('./src/js/*.js', ['browserify']);
     gulp.watch('./src/sass/*.scss', ['sass']);
 });
+
+
+// gulp.task('lint', function() {
+//     gulp.src('./src/js/*.js')
+//         .pipe(jshint())
+//         .pipe(jshint.reporter('default'));
+// });

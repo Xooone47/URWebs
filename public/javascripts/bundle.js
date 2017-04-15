@@ -31913,13 +31913,12 @@ var NavContainer = React.createClass({
   }
 });
 
-var menuCom = void 0;
 var Menu = React.createClass({
   displayName: 'Menu',
 
   getInitialState: function getInitialState() {
     return {
-      dist: []
+      // dist: []
     };
   },
   addWeb: function addWeb() {
@@ -31927,7 +31926,6 @@ var Menu = React.createClass({
     var url = $("#addWebUrl").val();
     var webName = $("#addWebName").val();
     var groupName = $("#addWebGroup").val();
-    // console.log(url, webName, groupName);
     if (url == "" || webName == "" || groupName == "") {
       console.log("fail to add web");
       return;
@@ -31935,7 +31933,8 @@ var Menu = React.createClass({
     $.ajax({
       url: '/addWeb',
       type: 'POST',
-      data: { url: url,
+      data: {
+        url: url,
         webName: webName,
         groupName: groupName
       },
@@ -31956,54 +31955,102 @@ var Menu = React.createClass({
     $("#addWebGroup").val("");
   },
   handleDist: function handleDist(e) {
+    $('.showDist').toggleClass('showDist');
+    $(e.target).toggleClass('showDist');
     colWebsCom.setState({ showWebs: e.target.innerHTML });
   },
+  showAddWebForm: function showAddWebForm() {
+    $("#addWebForm").slideToggle();
+  },
+  showMenu: function showMenu() {
+    $("#menuContainer").slideToggle();
+  },
   render: function render() {
-    menuCom = this;
+    console.log(2);
+    console.log(this.props.dist);
     var that = this;
-    var distList = this.state.dist.map(function (distItem, index) {
+    var distList = this.props.dist.map(function (distItem, index) {
       return React.createElement(
         'li',
         { key: index, className: 'distItem lis', onClick: that.handleDist },
         distItem
       );
     });
-    return React.createElement(
-      'div',
-      { id: 'Menu' },
-      React.createElement(
+    if (this.props.ifLogin) {
+      return React.createElement(
         'div',
-        { id: 'addWebContainer' },
+        { id: 'Menu' },
         React.createElement(
           'span',
-          { id: 'addWebHead' },
-          'ADD WEB'
-        ),
-        React.createElement('input', { type: 'text', id: 'addWebUrl', className: 'addWebInput', placeholder: 'URL', required: true }),
-        React.createElement('input', { type: 'text', id: 'addWebName', className: 'addWebInput', placeholder: 'WEB NAME', required: true }),
-        React.createElement('input', { type: 'text', id: 'addWebGroup', className: 'addWebInput', placeholder: 'GROUP', required: true }),
-        React.createElement(
-          'button',
-          { id: 'addWebBtn', className: 'menuBtn', onClick: this.addWeb },
-          'CONFIRM'
+          { id: 'menuHead', onClick: this.showMenu },
+          'MENU'
         ),
         React.createElement(
-          'button',
-          { id: 'resetWebBtn', className: 'menuBtn', onClick: this.resetWeb },
-          'RESET'
+          'div',
+          { id: 'menuContainer' },
+          React.createElement(
+            'div',
+            { id: 'addWebContainer' },
+            React.createElement(
+              'span',
+              { id: 'addWebHead', onClick: this.showAddWebForm },
+              'ADD WEB'
+            ),
+            React.createElement(
+              'div',
+              { id: 'addWebForm' },
+              React.createElement('input', { type: 'text', id: 'addWebUrl', className: 'addWebInput', placeholder: 'URL', required: true }),
+              React.createElement('input', { type: 'text', id: 'addWebName', className: 'addWebInput', placeholder: 'WEB NAME', required: true }),
+              React.createElement('input', { type: 'text', id: 'addWebGroup', className: 'addWebInput', placeholder: 'GROUP', required: true }),
+              React.createElement(
+                'button',
+                { id: 'addWebBtn', className: 'menuBtn', onClick: this.addWeb },
+                'CONFIRM'
+              ),
+              React.createElement(
+                'button',
+                { id: 'resetWebBtn', className: 'menuBtn', onClick: this.resetWeb },
+                'RESET'
+              )
+            )
+          ),
+          React.createElement(
+            'ul',
+            { id: 'webDist' },
+            React.createElement(
+              'li',
+              { className: 'distItem lis showDist', onClick: this.handleDist },
+              'ALL'
+            ),
+            distList
+          )
         )
-      ),
-      React.createElement(
-        'ul',
-        { id: 'webDist' },
+      );
+    } else {
+      return React.createElement(
+        'div',
+        { id: 'Menu' },
         React.createElement(
-          'li',
-          { className: 'distItem lis', onClick: this.handleDist },
-          'ALL'
+          'span',
+          { id: 'menuHead', onClick: this.showMenu },
+          'MENU'
         ),
-        distList
-      )
-    );
+        React.createElement(
+          'div',
+          { id: 'menuContainer' },
+          React.createElement(
+            'ul',
+            { id: 'webDist' },
+            React.createElement(
+              'li',
+              { className: 'distItem lis showDist', onClick: this.handleDist },
+              'ALL'
+            ),
+            distList
+          )
+        )
+      );
+    }
   }
 });
 
@@ -32013,13 +32060,14 @@ var ColWebs = React.createClass({
 
   getInitialState: function getInitialState() {
     return {
-      allWebs: [],
       showWebs: "ALL"
     };
   },
   render: function render() {
+    console.log(3);
     colWebsCom = this;
-    var allWebs = this.state.allWebs;
+    var allWebs = this.props.allWebs;
+    // let allWebs = this.state.allWebs;
     if (this.state.showWebs != "ALL") {
       var newArr = [];
       for (var i = 0; i < allWebs.length; i++) {
@@ -32055,8 +32103,8 @@ var Content = React.createClass({
   getInitialState: function getInitialState() {
     return {
       log: false,
-      webs: null,
-      groups: null
+      webs: [],
+      groups: []
     };
   },
   getHotWebs: function getHotWebs() {
@@ -32077,9 +32125,6 @@ var Content = React.createClass({
           webs: data,
           groups: groups
         });
-        colWebsCom.setState({ allWebs: data });
-        menuCom.setState({ dist: groups });
-        // console.log(that.state.webs, that.state.groups);
       },
       error: function error(xhr, textStatus) {
         console.log('error', xhr, textStatus);
@@ -32104,9 +32149,6 @@ var Content = React.createClass({
           webs: data,
           groups: groups
         });
-        colWebsCom.setState({ allWebs: data });
-        menuCom.setState({ dist: groups });
-        // console.log(that.state.webs, that.state.groups);
       },
       error: function error(xhr, textStatus) {
         console.log('error', xhr, textStatus);
@@ -32114,15 +32156,17 @@ var Content = React.createClass({
     });
   },
   componentWillMount: function componentWillMount() {
+    console.log("contentWillMount");
     this.getHotWebs();
   },
   render: function render() {
+    console.log(1);
     contentCom = this;
     return React.createElement(
       'div',
       { id: 'contentContainer' },
-      React.createElement(Menu, { dist: this.state.groups }),
-      React.createElement(ColWebs, null)
+      React.createElement(Menu, { dist: this.state.groups, ifLogin: this.state.log }),
+      React.createElement(ColWebs, { allWebs: this.state.webs })
     );
   }
 });
@@ -32130,36 +32174,5 @@ var Content = React.createClass({
 ReactDOM.render(React.createElement(NavContainer, null), document.getElementById('header'));
 
 ReactDOM.render(React.createElement(Content, null), document.getElementById('content'));
-
-// function getUserWebs() {
-// 	$.ajax({
-// 		url: '/getUserWebs',
-//   			type: 'POST',
-//   			data: {},
-//   			// dataType: 'json',
-//   			success: function(data) {
-//   				console.log(data);
-//   			},
-//   			error:function(xhr,textStatus){
-//         		console.log('error', xhr, textStatus);
-//     		}
-// 	});
-// }
-
-// function getHotWebs() {
-// 	$.ajax({
-// 		url: '/getHotWebs',
-//   			type: 'GET',
-//   			data: {},
-//   			// dataType: 'json',
-//   			success: function(data) {
-//   				// console.log(data);
-//   				contentCom.setState({webs: data});
-//   			},
-//   			error:function(xhr,textStatus){
-//         		console.log('error', xhr, textStatus);
-//     		}
-// 	});
-// }
 
 },{"../../node_modules/jquery":24,"../../node_modules/react":188,"../../node_modules/react-dom":37,"../../node_modules/redux":194}]},{},[199]);

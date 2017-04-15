@@ -11,14 +11,14 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   overflow: scroll;
   font-size: 0.938rem;
-  min-width: 800px;
+  /*min-width: 800px;*/
   color: #586069;
   background-color: #f2f2f2;
 }
 
 nav {
     width: 100%;
-    min-width: 800px;
+    min-width: 350px;
     padding: 4px 0;
     /*background-color: #003333\9;*/
     /*background: linear-gradient(to right, #003333, #330033); /* 标准的语法 */
@@ -49,19 +49,20 @@ nav {
 
 #UrWebs {
     display: block;
-    width: 60px;
+    width: 80px;
     height: 43px;
+    font-size: 20px;
     margin: 0 auto;
     background-color: transparent;
-    border: 1px solid white;
-    border-radius: 5px;
-    color: white;
+    /*border: 1px solid white;*/
+    /*border-radius: 5px;*/
     outline: none;
+    border: none;
+    color: white;
     cursor: pointer;
 }
 
 .navBottom {
-    margin-top: 4px;
     width: 100%;
     /*display: none;*/
     overflow: hidden;
@@ -127,7 +128,7 @@ nav {
     height: 30px;
     width: 80px;
     position: relative;
-    margin: 0 auto 15px auto;
+    margin: 0 auto 10px auto;
     outline: none;
     background-color: #ce4312;
     border-radius: 5px;
@@ -156,7 +157,7 @@ nav {
 #welcomeTag {
     display: block;
     position: relative;
-    margin: 10px auto 0 auto;
+    margin: 0 auto 5px auto;
     color: white;
     width: 40px;
     letter-spacing: 1px;
@@ -173,8 +174,6 @@ nav {
     margin: 0 auto;
 }
 
-
-
 #Menu {
     width: 200px;
     padding: 10px 20px;
@@ -185,11 +184,31 @@ nav {
     /*border: 1px rgba(0, 0, 0, 0.31) solid !important;*/
 }
 
+#menuHead {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+
+#menuContainer {
+    margin-top: 5px;
+}
+
 #addWebHead {
     text-align: center;
     width: 100%;
     display: inline-block;
-    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+/*#addWebHead:hover {
+    background-color: #00CC99;
+    color: white;
+}*/
+
+#addWebForm {
+    display: none;
+    padding-top: 10px;
 }
 
 .addWebInput {   
@@ -222,7 +241,7 @@ nav {
 
 #addWebContainer {
     border-bottom: 1px solid rgba(0, 0, 0, 0.31);
-    padding-bottom: 15px;
+    padding-bottom: 10px;
     margin-bottom: 5px;
 }
 
@@ -236,15 +255,25 @@ nav {
 
 .lis {
     list-style: none;
-
 }
 
 .distItem {
+    border-bottom: 1px solid #ddd;
     text-align: center;
     padding: 5px 0;
+    cursor: pointer;
+}
+
+.distItem:last-child {
+    border-bottom: none;
 }
 
 .distItem:hover {
+    background-color: #00CC99;
+    color: white;
+}
+
+.showDist {
     background-color: #00CC99;
     color: white;
 }
@@ -262,3 +291,7 @@ nav {
     width: 100%;
     text-align: center;
 }
+
+
+
+/*-----------------------------------------responsive---------------------------------------------*/
