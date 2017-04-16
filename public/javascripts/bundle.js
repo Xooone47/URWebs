@@ -31714,7 +31714,10 @@ var NavBottom = React.createClass({
       logOrReg: true, //true时显示登录框，false时显示注册框
       username: '',
       password: '',
-      passwordRepeat: ''
+      passwordRepeat: '',
+      webUrl: '',
+      webName: '',
+      groupName: ''
     };
   },
   handleChoose: function handleChoose(e) {
@@ -31777,10 +31780,7 @@ var NavBottom = React.createClass({
       dataType: 'json',
       success: function success(data) {
         if (data.success == true) {
-          that.setState({ logIn: true });
-          contentCom.setState({ log: true });
-          contentCom.getUserWebs(); //让content组件获取用户数据
-          colWebsCom.setState({ showWebs: "ALL" });
+          console.log("sigu up successed");
         } else {
           console.log(data.error);
         }
@@ -31818,7 +31818,7 @@ var NavBottom = React.createClass({
       this.setState({ username: e.target.value });
     } else if (e.target.name == "password") {
       this.setState({ password: e.target.value });
-    } else if (e.target.name == "password-repeat") {
+    } else if (e.target.name == "passwordRepeat") {
       this.setState({ passwordRepeat: e.target.value });
       if (this.state.password != e.target.value) {
         $("#notMatch").css('display', 'block');
@@ -31827,12 +31827,52 @@ var NavBottom = React.createClass({
         $("#notMatch").css('display', 'none');
         $("#regSub").attr('disabled', false);
       }
+    } else if (e.target.name == "webUrl") {
+      this.setState({ webUrl: e.target.value });
+    } else if (e.target.name == "webName") {
+      this.setState({ webName: e.target.value });
+    } else if (e.target.name == "groupName") {
+      this.setState({ groupName: e.target.value });
     }
+  },
+  addWeb: function addWeb() {
+    var that = this;
+    var url = this.state.webUrl,
+        webName = this.state.webName,
+        groupName = this.state.groupName;
+    if (url == "" || webName == "" || groupName == "") {
+      console.log("fail to add web");
+      return;
+    }
+    $.ajax({
+      url: '/addWeb',
+      type: 'POST',
+      data: {
+        url: url,
+        webName: webName,
+        groupName: groupName
+      },
+      // dataType: 'json',
+      success: function success(data) {
+        console.log(data);
+        contentCom.getUserWebs();
+        that.resetWeb();
+      },
+      error: function error(xhr, textStatus) {
+        console.log('error', xhr, textStatus);
+      }
+    });
+  },
+  resetWeb: function resetWeb() {
+    this.setState({ webUrl: "", webName: "", groupName: "" });
   },
   render: function render() {
     var username = this.state.username,
         password = this.state.password,
         passwordRepeat = this.state.passwordRepeat;
+    var webUrl = this.state.webUrl,
+        webName = this.state.webName,
+        groupName = this.state.groupName;
     if (!this.state.logIn) {
       return React.createElement(
         'div',
@@ -31870,7 +31910,7 @@ var NavBottom = React.createClass({
             { className: 'register' },
             React.createElement('input', { type: 'text', name: 'username', placeholder: 'USERNAME', maxLength: '14', value: username, onChange: this.inputChange, required: true }),
             React.createElement('input', { type: 'password', name: 'password', placeholder: 'PASSWORD', maxLength: '14', value: password, onChange: this.inputChange, required: true }),
-            React.createElement('input', { type: 'password', name: 'password-repeat', placeholder: 'PASSWORD AGAIN', maxLength: '14', value: passwordRepeat, onChange: this.inputChange, required: true }),
+            React.createElement('input', { type: 'password', name: 'passwordRepeat', placeholder: 'PASSWORD AGAIN', maxLength: '14', value: passwordRepeat, onChange: this.inputChange, required: true }),
             React.createElement(
               'span',
               { id: 'notMatch' },
@@ -31889,6 +31929,31 @@ var NavBottom = React.createClass({
           { id: 'welcomeTag' },
           'Hi, ',
           this.state.username
+        ),
+        React.createElement(
+          'div',
+          { id: 'addWebContainer' },
+          React.createElement(
+            'div',
+            { id: 'addWebForm' },
+            React.createElement('input', { type: 'text', name: 'webUrl', className: 'addWebInput', placeholder: 'URL', value: webUrl, onChange: this.inputChange, required: true }),
+            React.createElement('input', { type: 'text', name: 'webName', className: 'addWebInput', placeholder: 'WEB NAME', value: webName, onChange: this.inputChange, required: true }),
+            React.createElement('input', { type: 'text', name: 'groupName', className: 'addWebInput', placeholder: 'GROUP', value: groupName, onChange: this.inputChange, required: true }),
+            React.createElement(
+              'div',
+              { id: 'addWebFormBtns' },
+              React.createElement(
+                'button',
+                { id: 'addWebBtn', className: 'menuBtn', onClick: this.addWeb },
+                'ADD'
+              ),
+              React.createElement(
+                'button',
+                { id: 'resetWebBtn', className: 'menuBtn', onClick: this.resetWeb },
+                'RESET'
+              )
+            )
+          )
         ),
         React.createElement(
           'button',
@@ -31921,52 +31986,12 @@ var Menu = React.createClass({
       // dist: []
     };
   },
-  addWeb: function addWeb() {
-    var that = this;
-    var url = $("#addWebUrl").val();
-    var webName = $("#addWebName").val();
-    var groupName = $("#addWebGroup").val();
-    if (url == "" || webName == "" || groupName == "") {
-      console.log("fail to add web");
-      return;
-    }
-    $.ajax({
-      url: '/addWeb',
-      type: 'POST',
-      data: {
-        url: url,
-        webName: webName,
-        groupName: groupName
-      },
-      // dataType: 'json',
-      success: function success(data) {
-        console.log(data);
-        contentCom.getUserWebs();
-        that.resetWeb();
-      },
-      error: function error(xhr, textStatus) {
-        console.log('error', xhr, textStatus);
-      }
-    });
-  },
-  resetWeb: function resetWeb() {
-    $("#addWebUrl").val("");
-    $("#addWebName").val("");
-    $("#addWebGroup").val("");
-  },
   handleDist: function handleDist(e) {
     $('.showDist').toggleClass('showDist');
     $(e.target).toggleClass('showDist');
     colWebsCom.setState({ showWebs: e.target.innerHTML });
   },
-  showAddWebForm: function showAddWebForm() {
-    $("#addWebForm").slideToggle();
-  },
-  showMenu: function showMenu() {
-    $("#menuContainer").slideToggle();
-  },
   render: function render() {
-    console.log(2);
     console.log(this.props.dist);
     var that = this;
     var distList = this.props.dist.map(function (distItem, index) {
@@ -31976,81 +32001,24 @@ var Menu = React.createClass({
         distItem
       );
     });
-    if (this.props.ifLogin) {
-      return React.createElement(
+    return React.createElement(
+      'div',
+      { id: 'menu' },
+      React.createElement(
         'div',
-        { id: 'Menu' },
+        { id: 'menuContainer' },
         React.createElement(
-          'span',
-          { id: 'menuHead', onClick: this.showMenu },
-          'MENU'
-        ),
-        React.createElement(
-          'div',
-          { id: 'menuContainer' },
+          'ul',
+          { id: 'webDist' },
           React.createElement(
-            'div',
-            { id: 'addWebContainer' },
-            React.createElement(
-              'span',
-              { id: 'addWebHead', onClick: this.showAddWebForm },
-              'ADD WEB'
-            ),
-            React.createElement(
-              'div',
-              { id: 'addWebForm' },
-              React.createElement('input', { type: 'text', id: 'addWebUrl', className: 'addWebInput', placeholder: 'URL', required: true }),
-              React.createElement('input', { type: 'text', id: 'addWebName', className: 'addWebInput', placeholder: 'WEB NAME', required: true }),
-              React.createElement('input', { type: 'text', id: 'addWebGroup', className: 'addWebInput', placeholder: 'GROUP', required: true }),
-              React.createElement(
-                'button',
-                { id: 'addWebBtn', className: 'menuBtn', onClick: this.addWeb },
-                'CONFIRM'
-              ),
-              React.createElement(
-                'button',
-                { id: 'resetWebBtn', className: 'menuBtn', onClick: this.resetWeb },
-                'RESET'
-              )
-            )
+            'li',
+            { className: 'distItem lis showDist', onClick: this.handleDist },
+            'ALL'
           ),
-          React.createElement(
-            'ul',
-            { id: 'webDist' },
-            React.createElement(
-              'li',
-              { className: 'distItem lis showDist', onClick: this.handleDist },
-              'ALL'
-            ),
-            distList
-          )
+          distList
         )
-      );
-    } else {
-      return React.createElement(
-        'div',
-        { id: 'Menu' },
-        React.createElement(
-          'span',
-          { id: 'menuHead', onClick: this.showMenu },
-          'MENU'
-        ),
-        React.createElement(
-          'div',
-          { id: 'menuContainer' },
-          React.createElement(
-            'ul',
-            { id: 'webDist' },
-            React.createElement(
-              'li',
-              { className: 'distItem lis showDist', onClick: this.handleDist },
-              'ALL'
-            ),
-            distList
-          )
-        )
-      );
-    }
+      )
+    );
   }
 });
 
@@ -32064,7 +32032,6 @@ var ColWebs = React.createClass({
     };
   },
   render: function render() {
-    console.log(3);
     colWebsCom = this;
     var allWebs = this.props.allWebs;
     // let allWebs = this.state.allWebs;
@@ -32084,7 +32051,12 @@ var ColWebs = React.createClass({
         React.createElement(
           'a',
           { className: 'weburl', href: web.url, target: '_blank' },
-          web.webName
+          React.createElement('img', { className: 'webLogo', src: '/images/noPicture.png', alt: 'No picture' }),
+          React.createElement(
+            'span',
+            { className: 'webName' },
+            web.webName
+          )
         )
       );
     });
@@ -32156,16 +32128,14 @@ var Content = React.createClass({
     });
   },
   componentWillMount: function componentWillMount() {
-    console.log("contentWillMount");
     this.getHotWebs();
   },
   render: function render() {
-    console.log(1);
     contentCom = this;
     return React.createElement(
       'div',
       { id: 'contentContainer' },
-      React.createElement(Menu, { dist: this.state.groups, ifLogin: this.state.log }),
+      React.createElement(Menu, { dist: this.state.groups }),
       React.createElement(ColWebs, { allWebs: this.state.webs })
     );
   }

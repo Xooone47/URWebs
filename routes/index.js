@@ -50,7 +50,6 @@ router.post('/signup', function(req, res) {
                 return res.send({"success": false,
             					"error": err});
             }
-            req.session.user = newUser;
             return res.send({"success": true});
         });
     });

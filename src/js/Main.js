@@ -25,7 +25,10 @@ let NavBottom = React.createClass({
     		logOrReg: true,	//true时显示登录框，false时显示注册框
     		username: '',
     		password: '',
-    		passwordRepeat: ''
+    		passwordRepeat: '',
+    		webUrl: '',
+    		webName: '',
+    		groupName: ''
     	};
   	},
   	handleChoose: function(e) {	//处理切换登录、注册框
@@ -82,11 +85,8 @@ let NavBottom = React.createClass({
   					"password": this.state.password},
   			dataType: 'json',
   			success: function(data) {
-  				if (data.success == true) {	
-  					that.setState({logIn: true});
-  					contentCom.setState({log: true});
-  					contentCom.getUserWebs();	//让content组件获取用户数据
-  					colWebsCom.setState({showWebs: "ALL"});
+  				if (data.success == true) {
+  					console.log("sigu up successed")
   				} else {
   					console.log(data.error);
   				}
@@ -122,7 +122,7 @@ let NavBottom = React.createClass({
   			this.setState({username: e.target.value});
   		} else if (e.target.name == "password") {
   			this.setState({password: e.target.value});
-  		} else if (e.target.name == "password-repeat") {
+  		} else if (e.target.name == "passwordRepeat") {
   			this.setState({passwordRepeat: e.target.value});
   			if (this.state.password != e.target.value) {
   				$("#notMatch").css('display', 'block');
@@ -131,71 +131,19 @@ let NavBottom = React.createClass({
   				$("#notMatch").css('display', 'none');
   				$("#regSub").attr('disabled', false);
   			}
+  		} else if (e.target.name == "webUrl") {
+  			this.setState({webUrl: e.target.value});
+  		} else if (e.target.name == "webName") {
+  			this.setState({webName: e.target.value});
+  		} else if (e.target.name == "groupName") {
+  			this.setState({groupName: e.target.value});
   		}
   	},
-	render: function() {
-		let username = this.state.username,
-			password = this.state.password,
-			passwordRepeat = this.state.passwordRepeat;
-		if (!this.state.logIn) {
-			return (
-				<div className="navBottom">
-					<div className="chooseLR">
-                        <a href="#signin" id="chooseL" className="selectedLR" onClick={this.handleChoose}>SIGN IN</a>
-                        <a href="#signup" id="chooseR" onClick={this.handleChoose}>SIGN UP</a>
-                    </div>
-                    <div className="log">
-                        <div className="login">
-                            <input type="text" name="username" placeholder="USERNAME" maxLength="14" value={username} onChange={this.inputChange} required />
-                            <input type="password" name="password" placeholder="PASSWORD" maxLength="14" value={password} onChange={this.inputChange} required />
-                            <input type="submit" value="SIGN IN" id="logSub" onClick={this.handleLogin}/>
-                        </div>
-                    </div>
-                    <div className="reg">
-                        <div className="register">
-                            <input type="text" name="username" placeholder="USERNAME" maxLength="14" value={username} onChange={this.inputChange} required />
-                            <input type="password" name="password" placeholder="PASSWORD" maxLength="14" value={password} onChange={this.inputChange} required />
-                            <input type="password" name="password-repeat" placeholder="PASSWORD AGAIN" maxLength="14" value={passwordRepeat} onChange={this.inputChange} required />
-                            <span id="notMatch">Passwords do not match!</span>
-                            <input type="submit" value="SIGN UP" id="regSub" onClick={this.handleSignup}/>
-                        </div>
-                    </div>
-				</div>
-				);
-		} else {
-			return (
-				<div className="navBottom">
-					<span id="welcomeTag">Hi, {this.state.username}</span>
-					
-					<button id="signOut" onClick={this.handleSignout}>SIGN OUT</button>
-				</div>
-				);
-		}		
-	}
-});
-
-let NavContainer = React.createClass({
-	render: function() {
-		return (
-			<div className="navContainer">
-				<NavTop/>
-				<NavBottom/>
-			</div>
-			);
-	}
-});
-
-let Menu = React.createClass({
-	getInitialState: function() {
-		return {
-			// dist: []
-		}
-	},
-	addWeb: function() {
+  	addWeb: function() {
 		let that = this;
-		let url = $("#addWebUrl").val();
-		let webName = $("#addWebName").val();
-		let groupName = $("#addWebGroup").val();
+		let url = this.state.webUrl,
+			webName = this.state.webName,
+			groupName = this.state.groupName;
 		if (url == "" || webName == "" || groupName == "") {
 			console.log("fail to add web");
 			return;
@@ -220,43 +168,93 @@ let Menu = React.createClass({
   		});
   	},
   	resetWeb: function() {
-  		$("#addWebUrl").val("");
-  		$("#addWebName").val("");
-  		$("#addWebGroup").val("");
+  		this.setState({webUrl: "", webName: "", groupName: ""});
   	},
+	render: function() {
+		let username = this.state.username,
+			password = this.state.password,
+			passwordRepeat = this.state.passwordRepeat;
+		let webUrl = this.state.webUrl,
+			webName = this.state.webName,
+			groupName = this.state.groupName;
+		if (!this.state.logIn) {
+			return (
+				<div className="navBottom">
+					<div className="chooseLR">
+                        <a href="#signin" id="chooseL" className="selectedLR" onClick={this.handleChoose}>SIGN IN</a>
+                        <a href="#signup" id="chooseR" onClick={this.handleChoose}>SIGN UP</a>
+                    </div>
+                    <div className="log">
+                        <div className="login">
+                            <input type="text" name="username" placeholder="USERNAME" maxLength="14" value={username} onChange={this.inputChange} required />
+                            <input type="password" name="password" placeholder="PASSWORD" maxLength="14" value={password} onChange={this.inputChange} required />
+                            <input type="submit" value="SIGN IN" id="logSub" onClick={this.handleLogin}/>
+                        </div>
+                    </div>
+                    <div className="reg">
+                        <div className="register">
+                            <input type="text" name="username" placeholder="USERNAME" maxLength="14" value={username} onChange={this.inputChange} required />
+                            <input type="password" name="password" placeholder="PASSWORD" maxLength="14" value={password} onChange={this.inputChange} required />
+                            <input type="password" name="passwordRepeat" placeholder="PASSWORD AGAIN" maxLength="14" value={passwordRepeat} onChange={this.inputChange} required />
+                            <span id="notMatch">Passwords do not match!</span>
+                            <input type="submit" value="SIGN UP" id="regSub" onClick={this.handleSignup}/>
+                        </div>
+                    </div>
+				</div>
+				);
+		} else {
+			return (
+				<div className="navBottom">
+					<span id="welcomeTag">Hi, {this.state.username}</span>
+					<div id="addWebContainer">
+						<div id="addWebForm">
+							<input type="text" name="webUrl" className="addWebInput" placeholder="URL" value={webUrl} onChange={this.inputChange} required/>
+							<input type="text" name="webName" className="addWebInput" placeholder="WEB NAME" value={webName} onChange={this.inputChange} required/>
+							<input type="text" name="groupName" className="addWebInput" placeholder="GROUP" value={groupName} onChange={this.inputChange} required/>
+							<div id="addWebFormBtns">
+								<button id="addWebBtn" className="menuBtn" onClick={this.addWeb}>ADD</button>
+								<button id="resetWebBtn" className="menuBtn" onClick={this.resetWeb}>RESET</button>
+							</div>
+						</div>			
+					</div>
+					<button id="signOut" onClick={this.handleSignout}>SIGN OUT</button>
+				</div>
+				);
+		}		
+	}
+});
+
+let NavContainer = React.createClass({
+	render: function() {
+		return (
+			<div className="navContainer">
+				<NavTop/>
+				<NavBottom/>
+			</div>
+			);
+	}
+});
+
+let Menu = React.createClass({
+	getInitialState: function() {
+		return {
+			// dist: []
+		}
+	},
   	handleDist: function(e) {
   		$('.showDist').toggleClass('showDist');
   		$(e.target).toggleClass('showDist');
   		colWebsCom.setState({showWebs: e.target.innerHTML});
   	},
-  	showAddWebForm: function() {
-  		$("#addWebForm").slideToggle();
-  	},
-  	showMenu: function() {
-  		$("#menuContainer").slideToggle();
-  	},
 	render: function() {
-		console.log(2);
 		console.log(this.props.dist);
 		let that = this;
 		let distList = this.props.dist.map(function(distItem, index) {
 			return (<li key={index} className="distItem lis" onClick={that.handleDist}>{distItem}</li>)
 		});
-		if (this.props.ifLogin) {
 			return (
-				<div id="Menu">
-					<span id="menuHead" onClick={this.showMenu}>MENU</span>
+				<div id="menu">
 					<div id="menuContainer">
-					<div id="addWebContainer">
-						<span id="addWebHead" onClick={this.showAddWebForm}>ADD WEB</span>
-						<div id="addWebForm">
-							<input type="text" id="addWebUrl" className="addWebInput" placeholder="URL" required/>
-							<input type="text" id="addWebName" className="addWebInput" placeholder="WEB NAME" required/>
-							<input type="text" id="addWebGroup" className="addWebInput" placeholder="GROUP" required/>
-							<button id="addWebBtn" className="menuBtn" onClick={this.addWeb}>CONFIRM</button>
-							<button id="resetWebBtn" className="menuBtn" onClick={this.resetWeb}>RESET</button>
-						</div>			
-					</div>
 					<ul id="webDist">
 						<li className="distItem lis showDist" onClick={this.handleDist}>ALL</li>
 						{distList}
@@ -264,19 +262,6 @@ let Menu = React.createClass({
 					</div>
 				</div>
 			);	
-		} else {
-			return (
-				<div id="Menu">
-					<span id="menuHead" onClick={this.showMenu}>MENU</span>
-					<div id="menuContainer">
-					<ul id="webDist">
-						<li className="distItem lis showDist" onClick={this.handleDist}>ALL</li>
-						{distList}
-					</ul>
-					</div>
-				</div>
-			);
-		}
 	}
 });
 
@@ -288,7 +273,6 @@ let ColWebs = React.createClass({
 		}
 	},
 	render: function() {
-		console.log(3);
 		colWebsCom = this;
 		let allWebs = this.props.allWebs;
 		// let allWebs = this.state.allWebs;
@@ -304,7 +288,10 @@ let ColWebs = React.createClass({
 		let webList = allWebs.map(function(web, index) {
 			return (
 				<li key={index} className="lis webItem">
-					<a className="weburl" href={web.url} target="_blank">{web.webName}</a>
+					<a className="weburl" href={web.url} target="_blank">
+						<img className="webLogo" src="/images/noPicture.png" alt="No picture"/>
+						<span className="webName">{web.webName}</span>
+					</a>
 				</li>
 				);
 		});
@@ -375,15 +362,13 @@ let Content = React.createClass({
 		});
 	},
 	componentWillMount: function() {
-		console.log("contentWillMount");
 		this.getHotWebs();
 	},
 	render: function() {
-		console.log(1);
 		contentCom = this;
 		return (
 			<div id="contentContainer">
-				<Menu dist={this.state.groups} ifLogin={this.state.log}/>
+				<Menu dist={this.state.groups}/>
 				<ColWebs allWebs={this.state.webs}/>
 			</div>
 		);

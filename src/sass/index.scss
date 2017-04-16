@@ -11,7 +11,6 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   overflow: scroll;
   font-size: 0.938rem;
-  /*min-width: 800px;*/
   color: #586069;
   background-color: #f2f2f2;
 }
@@ -164,7 +163,7 @@ nav {
 }
 
 #content {
-    min-width: 800px;
+    /*min-width: 768px;*/
     height: 500px;
 }
 
@@ -174,7 +173,7 @@ nav {
     margin: 0 auto;
 }
 
-#Menu {
+#menu {
     width: 200px;
     padding: 10px 20px;
     background-color: white;
@@ -184,11 +183,11 @@ nav {
     /*border: 1px rgba(0, 0, 0, 0.31) solid !important;*/
 }
 
-#menuHead {
+/*#menuHead {
     display: inline-block;
     width: 100%;
     text-align: center;
-}
+}*/
 
 #menuContainer {
     margin-top: 5px;
@@ -199,6 +198,7 @@ nav {
     width: 100%;
     display: inline-block;
     cursor: pointer;
+    color: white;
 }
 
 /*#addWebHead:hover {
@@ -207,8 +207,13 @@ nav {
 }*/
 
 #addWebForm {
-    display: none;
     padding-top: 10px;
+}
+
+#addWebFormBtns {
+    display: block;
+    width: 200px;
+    margin: 0 auto;
 }
 
 .addWebInput {   
@@ -281,17 +286,55 @@ nav {
 .webItem {
     display: inline-block;
     width: 205px;
-    height: 105px;
+    height: 124px;
     margin: 0 20px 15px 0px;
     background-color: white;
+    float: left;
 }
 
 .weburl {
     display: inline-block;
     width: 100%;
     text-align: center;
+    text-decoration: none;
+}
+
+.webLogo {
+    width: 100%;
+}
+
+.webName {
+    display: block;
+    position: relative;
+    top: -23px;
+    height: 20px;
+    opacity: 0.9;
+    background-color: white;
+    z-index: 999;
+    color: #586069;
+    letter-spacing: 1px;
+}
+
+.webName:hover {
+    background-color: #666666;
+    opacity: 0.9;
+    color: white;
 }
 
 
-
 /*-----------------------------------------responsive---------------------------------------------*/
+@media screen and (max-width: 813px) {
+    #contentContainer {
+        padding: 20px 5px;
+    }
+    #menu {
+        width: 25%;
+        margin-right: 10px;
+        display: inline-block;
+    }
+    #colWebs {
+        width: 67%;
+        display: inline-block;
+        margin-left: 0;
+    }
+}
