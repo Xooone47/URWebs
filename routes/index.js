@@ -83,16 +83,40 @@ router.post("/getUserWebs", function(req, res) {
 
 router.get("/getHotWebs", function(req, res) {
 	var webs = [{"groupName": "Social",
-				"webName": "SinaWeibo",
+				"webName": "新浪微博",
 				"url": "http://weibo.com/"
+				},
+				{"groupName": "Social",
+				"webName": "知乎",
+				"url": "https://www.zhihu.com/"
+				},
+				{"groupName": "Social",
+				"webName": "豆瓣",
+				"url": "https://www.douban.com/"
 				},
 				{"groupName": "Coding",
 				"webName": "Github",
 				"url": "https://github.com/"
 				},
+				{"groupName": "Coding",
+				"webName": "SegmentFault",
+				"url": "https://segmentfault.com/"
+				},
+				{"groupName": "Coding",
+				"webName": "React.js",
+				"url": "http://reactjs.cn/"
+				},
 				{"groupName": "More",
 				"webName": "SDCS",
 				"url": "http://sdcs.sysu.edu.cn/"
+				},
+				{"groupName": "More",
+				"webName": "百度",
+				"url": "https://www.baidu.com/"
+				},
+				{"groupName": "More",
+				"webName": "Google",
+				"url": "https://www.google.com.hk/"
 				}];
    	res.send(webs);
 });
